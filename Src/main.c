@@ -8,17 +8,20 @@ void SystemClock_Config(void);
 
 int main(void)
 {
-  LL_Init();
+	LL_Init();
 
-  SystemClock_Config();
-  MX_GPIO_Init();
-  MX_I2C1_Init();
+	SystemClock_Config();
+	LL_Init1msTick(84000000);
+	
+	MX_GPIO_Init();
+	MX_I2C1_Init();
 
-  while (1)
-  {
-
-
-  }
+	while (1)
+	{
+		I2C_Send(0x41, 0x22);
+		
+		LL_mDelay(100);
+	}
 
 
 }

@@ -13,17 +13,22 @@
 														//falling edge while SCL is high, occurring in a non-valid 
 														//position during a byte transfer
 														
-#define I2C_TIMEOUT		(I2C1->SR1 & I2C_SR1_TIMEOUT)	//SCL remained low for 25ms
+#define I2C_TIMEOUT_ERR	(I2C1->SR1 & I2C_SR1_TIMEOUT)	//SCL remained low for 25ms
 #define I2C_PEC_ERROR	(I2C1->SR1 & I2C_SR1_PECERR)	//Packet Error Correction 
 #define I2C_OVR			(I2C1->SR1 & I2C_SR1_OVR)		//Overrun or underrun
 #define I2C_ACK_FAIL	(I2C1->SR1 & I2C_SR1_AF)		//Acknowledge failure
 #define I2C_ARLO		(I2C1->SR1 & I2C_SR1_ARLO)		//Arbitration lost
 
-#define I2C_ERROR_CHECK	(I2C_TIMEOUT | I2C_PEC_ERROR | I2C_OVR | I2C_ACK_FAIL | I2C_ARLO) //Return 0 if errors not detected
+#define I2C_ERROR_CHECK	(I2C_TIMEOUT_ERR | I2C_PEC_ERROR | I2C_OVR | I2C_ACK_FAIL | I2C_ARLO) //Return 0 if errors not detected
 
 #define I2C_MODE		(I2C1->SR2 & I2C_SR2_TRA)		//0 - Receive Mode ; 1 - Transmit Mode  
 #define I2C_BUS_BUSY	(I2C1->SR2 & I2C_SR2_BUSY)		//0 - No communication on the bus ; 1 - Communication ongoing on the bus
 #define I2C_MSL			(I2C1->SR2 & I2C_SR2_MSL)		//0 - Slave Mode ; 1 - Master mode
+
+#define I2C_TIMEOUT		50000
+
+
+uint32_t i2c_timeout = 0;
 
 /* I2C1 init function */
 void MX_I2C1_Init(void)
@@ -73,24 +78,39 @@ void MX_I2C1_Init(void)
 
 ErrorStatus I2C_Send(uint8_t data, uint8_t address){
 	
-	ErrorStatus status = ERROR;							//Initialise status variable with ERROR
+//	ErrorStatus status = ERROR;							//Initialise status variable with ERROR
+	
+	i2c_timeout = I2C_TIMEOUT;
 	
 	I2C1->CR1 |= I2C_CR1_START;							//Start generation; switch to Master mode
-	while(!(I2C1->SR1 & I2C_SR1_SB)){};					//Wait until Start condition is generated
+	while(!(I2C1->SR1 & I2C_SR1_SB)){					//Wait until Start condition is generated
+		if(--i2c_timeout == 0)
+			return ERROR;
+	}		
 	
+	i2c_timeout = I2C_TIMEOUT;
 	I2C1->DR = I2C_GEN_ADDRESS(address, I2C_TX_MODE);	//Generate address in transmission mode (R/W address bit set to 0)
-	while(!(I2C1->SR1 & I2C_SR1_ADDR)){};				//Wait until the address is sent
+	while(!(I2C1->SR1 & I2C_SR1_ADDR)){					//Wait until the address is sent
+		if(--i2c_timeout == 0)
+			return ERROR;
+	}
+	I2C1->SR2;
 	
-	if(!I2C_ERROR_CHECK & I2C_MSL)						//Chech errors and if I2C is in master mode(it is necesary to read SR1(errors) 
-														//and SR2(MSL) in order to clear ADDR bit!)
-		status = SUCCESS;
+	i2c_timeout = I2C_TIMEOUT;
+	while (!(I2C1->SR1 & I2C_SR1_TXE) && i2c_timeout) {
+		i2c_timeout--;
+	}
+	I2C1->DR = data;									//Write data to the Data Register
 	
-	I2C1->DR = data;									//Write data to the Data Refgister'
-//	while(!(I2C1->SR1 & I2C_SR1_TXE)){};				//Wait until Tx buffer is empty(used if several data bytes are to be sent)
+	i2c_timeout = I2C_TIMEOUT;
+	while (((!(I2C1->SR1 & I2C_SR1_TXE)) || (!(I2C1->SR1 & I2C_SR1_BTF)))) {
+		if (--i2c_timeout == 0) {
+			return ERROR;
+		}
+	}
+	I2C1->CR1 |= I2C_CR1_STOP;
 
-	while((I2C1->SR1 & I2C_SR1_BTF)){};				//Check Byte Transfer Flag
-	I2C1->CR1 |= I2C_CR1_STOP;							//Stop generation
 	
-	return status;
+	return SUCCESS;
 }
 

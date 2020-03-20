@@ -5,6 +5,7 @@
 static void LL_Init(void);
 void SystemClock_Config(void);
 
+ErrorStatus status = ERROR;
 
 int main(void)
 {
@@ -18,7 +19,7 @@ int main(void)
 
 	while (1)
 	{
-		I2C_Send(0x41, 0x22);
+		status = I2C_Send(0x41, 0x22);
 		
 		LL_mDelay(100);
 	}

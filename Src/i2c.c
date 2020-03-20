@@ -6,7 +6,7 @@
 #define I2C_TX_MODE		0
 #define I2C_RX_MODE		1
 
-#define I2C_GEN_ADDRESS(ADR, MODE) (ADR | MODE)
+#define I2C_GEN_ADDRESS(ADR, MODE) ((ADR << 1) | MODE)
 
 
 #define I2C_BUS_ERROR	(I2C1->SR1 & I2C_SR1_BERR)		//Set by hardware when the interface detects an SDA rising or
@@ -87,9 +87,9 @@ ErrorStatus I2C_Send(uint8_t data, uint8_t address){
 	
 	I2C1->DR = data;									//Write data to the Data Refgister'
 //	while(!(I2C1->SR1 & I2C_SR1_TXE)){};				//Wait until Tx buffer is empty(used if several data bytes are to be sent)
-	
-	while(!(I2C2->SR1 & I2C_SR1_BTF)){};				//Check Byte Transfer Flag
-	I2C2->CR1 |= I2C_CR1_STOP;							//Stop generation
+
+	while((I2C1->SR1 & I2C_SR1_BTF)){};				//Check Byte Transfer Flag
+	I2C1->CR1 |= I2C_CR1_STOP;							//Stop generation
 	
 	return status;
 }

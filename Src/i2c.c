@@ -78,39 +78,23 @@ void MX_I2C1_Init(void)
 
 ErrorStatus I2C_Send(uint8_t data, uint8_t address){
 	
-//	ErrorStatus status = ERROR;							//Initialise status variable with ERROR
+	LL_I2C_DisableBitPOS(I2C1);
+	LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
 	
-	i2c_timeout = I2C_TIMEOUT;
-	
-	I2C1->CR1 |= I2C_CR1_START;							//Start generation; switch to Master mode
-	while(!(I2C1->SR1 & I2C_SR1_SB)){					//Wait until Start condition is generated
-		if(--i2c_timeout == 0)
-			return ERROR;
-	}		
-	
-	i2c_timeout = I2C_TIMEOUT;
-	I2C1->DR = I2C_GEN_ADDRESS(address, I2C_TX_MODE);	//Generate address in transmission mode (R/W address bit set to 0)
-	while(!(I2C1->SR1 & I2C_SR1_ADDR)){					//Wait until the address is sent
-		if(--i2c_timeout == 0)
-			return ERROR;
-	}
-	I2C1->SR2;
-	
-	i2c_timeout = I2C_TIMEOUT;
-	while (!(I2C1->SR1 & I2C_SR1_TXE) && i2c_timeout) {
-		i2c_timeout--;
-	}
-	I2C1->DR = data;									//Write data to the Data Register
-	
-	i2c_timeout = I2C_TIMEOUT;
-	while (((!(I2C1->SR1 & I2C_SR1_TXE)) || (!(I2C1->SR1 & I2C_SR1_BTF)))) {
-		if (--i2c_timeout == 0) {
-			return ERROR;
-		}
-	}
-	I2C1->CR1 |= I2C_CR1_STOP;
+	LL_I2C_GenerateStartCondition(I2C1);
+	while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+	(void) I2C1->SR1;
+		
+	LL_I2C_TransmitData8(I2C1, I2C_GEN_ADDRESS(address, I2C_TX_MODE));
+		
+	while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+	LL_I2C_ClearFlag_ADDR(I2C1);
+		
+	LL_I2C_TransmitData8(I2C1, data);
+	while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+		
+	LL_I2C_GenerateStopCondition(I2C1);
 
-	
 	return SUCCESS;
 }
 

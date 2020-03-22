@@ -152,41 +152,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>100</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134218300</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Src/i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\MasterSim\../Src/i2c.c\100</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>106</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134218336</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Src/i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\MasterSim\../Src/i2c.c\106</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
           <LineNumber>22</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134220188</Address>
+          <Address>134220160</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -196,6 +164,22 @@
           <Filename>../Src/main.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\MasterSim\../Src/main.c\22</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>94</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134218318</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>../Src/i2c.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\MasterSim\../Src/i2c.c\94</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

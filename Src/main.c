@@ -12,7 +12,7 @@ int main(void)
 	LL_Init();
 
 	SystemClock_Config();
-//	LL_Init1msTick(84000000);
+	LL_Init1msTick(84000000);
 	
 	MX_GPIO_Init();
 	MX_I2C1_Init();

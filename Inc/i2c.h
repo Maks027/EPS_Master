@@ -13,7 +13,7 @@
 extern void _Error_Handler(char *, int);
 
 void MX_I2C1_Init(void);
-ErrorStatus I2C_Send(uint8_t data, uint8_t address);
+void I2C_Send(void);
 
 
 #ifdef __cplusplus

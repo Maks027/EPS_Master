@@ -19,9 +19,8 @@ int main(void)
 
 	while (1)
 	{
-		status = I2C_Send(0x41, 0x22);
-		
-		LL_mDelay(100);
+		I2C_Send();
+
 	}
 
 
@@ -29,7 +28,6 @@ int main(void)
 static void LL_Init(void)
 {
   
-
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
 
